@@ -1,4 +1,4 @@
-package com.example.internmanager.modal;
+package com.example.internmanager.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,19 +6,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 
 @Entity
-@Table(name = "mentors")
-public class Mentor {
+@Table(name = "interns")
+public class Intern {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "mentor_id")
-    private Long mentorId;
+    @Column(name = "intern_id")
+    private Long internId;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -35,6 +34,7 @@ public class Mentor {
     @Column(name = "position")
     private String position;
 
-    @OneToMany(mappedBy = "mentor", cascade = CascadeType.ALL)
-    List<Intern> internList;
+    @ManyToOne
+    @JoinColumn(name = "mentor_id")
+    private Mentor mentor;
 }
