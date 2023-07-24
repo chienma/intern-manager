@@ -22,8 +22,8 @@ public class Intern {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "day_of_birth")
-    private LocalDate dayOfBirth;
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
 
     @Column(name = "phone_number")
     private String phoneNumber;

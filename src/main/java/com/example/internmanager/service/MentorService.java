@@ -3,6 +3,7 @@ package com.example.internmanager.service;
 import com.example.internmanager.model.Mentor;
 import com.example.internmanager.repository.MentorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,8 +33,13 @@ public class MentorService {
         return mentorRepository.save(mentor);
     }
 
-    public void deleteById(Long id) {
-        mentorRepository.deleteById(id);
+    public boolean deleteById(Long id) {
+        try {
+            mentorRepository.deleteById(id);
+            return true;
+        } catch (EmptyResultDataAccessException e) {
+            return false;   // When can't find by id
+        }
     }
 
 }
