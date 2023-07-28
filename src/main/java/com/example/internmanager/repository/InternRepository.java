@@ -2,7 +2,6 @@ package com.example.internmanager.repository;
 
 import com.example.internmanager.model.Intern;
 import com.example.internmanager.model.Mentor;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
