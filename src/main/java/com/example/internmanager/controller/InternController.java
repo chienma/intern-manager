@@ -61,6 +61,16 @@ public class InternController {
         }
     }
 
+    @PutMapping("/{intern-id}/mentor/{mentor-id}")
+    public ResponseEntity<?> setMentorForIntern(@PathVariable("intern-id") Long internId, @PathVariable("mentor-id") Long mentorId) {
+        try {
+            Intern newIntern = internService.setMentorForIntern(internId, mentorId);
+            return ResponseEntity.ok(newIntern);
+        } catch (EmptyResultDataAccessException exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        }
+    }
+
     @DeleteMapping("/{intern-id}")
     public ResponseEntity<Void> deleteIntern(@PathVariable("intern-id") Long internId) {
         boolean deleted = internService.deleteById(internId);
