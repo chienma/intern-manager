@@ -22,12 +22,12 @@ public class InternController {
 
     @GetMapping
     public List<Intern> getAllInterns() {
-        return internService.getAllInterns();
+        return internService.getAll();
     }
 
     @GetMapping("/{intern-id}")
     public ResponseEntity<Intern> getInternById(@PathVariable("intern-id") Long id) {
-        Intern intern = internService.getInternById(id);
+        Intern intern = internService.getById(id);
         if (intern != null) {
             return ResponseEntity.ok(intern);
         } else {
@@ -35,10 +35,15 @@ public class InternController {
         }
     }
 
+    @GetMapping("/search")
+    public List<Intern> searchInterns(@RequestParam("keyword") String keyword) {
+        return internService.findByKeyword(keyword);
+    }
+
     @PostMapping
-    public ResponseEntity<?> addMentor(@RequestBody Intern intern) {
+    public ResponseEntity<?> addIntern(@RequestBody Intern intern) {
         try {
-            Intern newIntern = internService.createIntern(intern);
+            Intern newIntern = internService.create(intern);
             return ResponseEntity.ok(newIntern);
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -46,9 +51,9 @@ public class InternController {
     }
 
     @PutMapping("/{intern-id}")
-    public ResponseEntity<?> updateMentor(@PathVariable("intern-id") Long internId, @RequestBody Intern intern) {
+    public ResponseEntity<?> updateIntern(@PathVariable("intern-id") Long internId, @RequestBody Intern intern) {
         try {
-            Intern newIntern = internService.updateIntern(internId, intern);
+            Intern newIntern = internService.update(internId, intern);
             return ResponseEntity.ok(newIntern);
         } catch (IllegalArgumentException | DataIntegrityViolationException |
                  EmptyResultDataAccessException exception) {
@@ -58,7 +63,7 @@ public class InternController {
 
     @DeleteMapping("/{intern-id}")
     public ResponseEntity<Void> deleteIntern(@PathVariable("intern-id") Long internId) {
-        boolean deleted = internService.deleteInternById(internId);
+        boolean deleted = internService.deleteById(internId);
         if (deleted) {
             return ResponseEntity.ok().build();
         }
