@@ -4,10 +4,12 @@ import com.example.internmanager.model.Intern;
 import com.example.internmanager.model.Mentor;
 import com.example.internmanager.repository.InternRepository;
 import com.example.internmanager.repository.MentorRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+@Transactional
 // By inheriting UserService, it reuses existing logic
 @Service
 public class InternService extends UserService<Intern, InternRepository> {

@@ -18,6 +18,6 @@ import java.util.List;
 @Table(name = "mentors")
 public class Mentor extends User {
     @OneToMany(mappedBy = "mentor", cascade = CascadeType.ALL)
-    @JsonIdentityReference()
+    @JsonIdentityReference(alwaysAsId = true)
     private List<Intern> internList;
 }
