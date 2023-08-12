@@ -9,4 +9,12 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        hbm2ddl:
+          auto: create
     show-sql: true
+application:
+  security:
+    jwt:
+      base64SecretKey: ${BASE64_SECRET_KEY}
+      accessTokenExpirationMillis: 1800000 # 30 phút
+      refreshTokenExpirationMillis: 604800000 # 7 ngày
