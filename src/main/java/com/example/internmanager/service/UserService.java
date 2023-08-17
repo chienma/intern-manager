@@ -20,7 +20,7 @@ public abstract class UserService<T extends User, R extends UserRepository<T>> {
         return getRepository().findById(id).orElse(null);
     }
 
-    // Search for T-type Users with name, email, phone, position fields similar to keywords
+    // Search for T-type Users with fullName, email, phone, position fields similar to keywords
     public List<T> findByKeyword(String keyword) {
         return getRepository().findByKeyword(keyword);
     }

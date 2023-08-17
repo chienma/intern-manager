@@ -7,7 +7,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.function.Function;
 
-@Component
+@Service
 public class JwtService {
     @Value("${application.security.jwt.base64SecretKey}")
     private String base64SecretKey;
@@ -60,7 +60,7 @@ public class JwtService {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(expirationDate)
-                .signWith(getHmacShaSecretKey(), SignatureAlgorithm.ES256)
+                .signWith(getHmacShaSecretKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
