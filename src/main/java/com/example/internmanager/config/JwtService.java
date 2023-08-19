@@ -2,6 +2,7 @@ package com.example.internmanager.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.function.Function;
 
 @Service
@@ -28,6 +28,15 @@ public class JwtService {
 
     public String extractUsername(String token) {
         return extractClaimValue(token, Claims::getSubject);
+    }
+
+    public TokenType extractTokenType(String token) {
+        String tokenTypeString = extractClaimValue(token, claims -> claims.get("token_type", String.class));
+        if(tokenTypeString.equals(TokenType.ACCESS.name())) {
+            return TokenType.ACCESS;
+        } else if (tokenTypeString.equals(TokenType.REFRESH.name())) {
+            return TokenType.REFRESH;
+        } else throw new MalformedJwtException("Invalid token type");
     }
 
     public Date extractExpiration(String token) {
@@ -52,9 +61,12 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    private String generateTokens(HashMap<String, Objects> additionalClaims, UserDetails userDetails, Long tokenExpirationMillis) {
+    private String generateTokens(TokenType tokenType, HashMap<String, Object> additionalClaims, UserDetails userDetails, Long tokenExpirationMillis) {
         Date now = new Date();
         Date expirationDate = new Date(now.getTime() + tokenExpirationMillis);
+
+        additionalClaims.put("token_type", tokenType.name());
+
         return Jwts.builder()
                 .setClaims(additionalClaims)
                 .setSubject(userDetails.getUsername())
@@ -68,19 +80,25 @@ public class JwtService {
         return generateAccessToken(new HashMap<>(), userDetails);
     }
 
-    public String generateAccessToken(HashMap<String, Objects> additionalClaims, UserDetails userDetails) {
-        return generateTokens(additionalClaims, userDetails, accessTokenExpirationMillis);
+    public String generateAccessToken(HashMap<String, Object> additionalClaims, UserDetails userDetails) {
+        return generateTokens(TokenType.ACCESS, additionalClaims, userDetails, accessTokenExpirationMillis);
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
-        return generateTokens(new HashMap<>(), userDetails, refreshTokenExpirationMillis);
+        return generateTokens(TokenType.REFRESH, new HashMap<>(), userDetails, refreshTokenExpirationMillis);
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        return (extractUsername(token).equals(userDetails.getUsername())) && !isTokenExpired(token);
+    public boolean isAccessTokenValid(String token, UserDetails userDetails) {
+        if(extractTokenType(token) != TokenType.ACCESS) return false;
+        return (extractUsername(token).equals(userDetails.getUsername())) && isTokenNotExpired(token);
     }
 
-    public boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+    public boolean isRefreshTokenValid(String token, UserDetails userDetails) {
+        if(extractTokenType(token) != TokenType.REFRESH) return false;
+        return (extractUsername(token).equals(userDetails.getUsername())) && isTokenNotExpired(token);
+    }
+
+    public boolean isTokenNotExpired(String token) {
+        return !extractExpiration(token).before(new Date());
     }
 }

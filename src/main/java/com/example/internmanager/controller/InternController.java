@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,7 +41,9 @@ public class InternController {
         return internService.findByKeyword(keyword);
     }
 
+
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> addIntern(@RequestBody Intern intern) {
         try {
             Intern newIntern = internService.create(intern);
@@ -61,17 +64,8 @@ public class InternController {
         }
     }
 
-    @PutMapping("/{intern-id}/mentor/{mentor-id}")
-    public ResponseEntity<?> setMentorForIntern(@PathVariable("intern-id") Long internId, @PathVariable("mentor-id") Long mentorId) {
-        try {
-            Intern newIntern = internService.setMentorForIntern(internId, mentorId);
-            return ResponseEntity.ok(newIntern);
-        } catch (EmptyResultDataAccessException exception) {
-            return ResponseEntity.badRequest().body(exception.getMessage());
-        }
-    }
-
     @DeleteMapping("/{intern-id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteIntern(@PathVariable("intern-id") Long internId) {
         boolean deleted = internService.deleteById(internId);
         if (deleted) {

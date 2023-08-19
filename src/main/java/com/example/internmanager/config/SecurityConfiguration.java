@@ -27,11 +27,17 @@ public class SecurityConfiguration {
         http
                 .csrf((csrf) -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(
+                                "/auth/**",
+                                "/api-docs/**",
+                                "/api-docs.yaml",
+                                "/swagger-ui/**"
+                        ).permitAll()
+                        .requestMatchers("/interns/**").hasAnyAuthority("ADMIN", "INTERN")
+                        .requestMatchers("/mentors/**").hasAnyAuthority("ADMIN", "MENTOR")
                         .anyRequest().authenticated()
                 )
-                .sessionManagement((sessionManagement) ->
-                        sessionManagement
+                .sessionManagement((sessionManagement) -> sessionManagement
                                 .sessionConcurrency((sessionConcurrency) ->
                                         sessionConcurrency
                                                 // Setting the maximum number of concurrent sessions per user to 1

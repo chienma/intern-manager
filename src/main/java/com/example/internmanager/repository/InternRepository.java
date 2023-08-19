@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface InternRepository extends UserRepository<Intern> {
+public interface  InternRepository extends UserRepository<Intern> {
     @Modifying
     @Query("UPDATE Intern i SET i.mentor = :mentor WHERE i.id = :id")
     void setMentorForIntern(@Param("id") Long id, @Param("mentor") Mentor mentor);
